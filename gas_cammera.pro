@@ -11,6 +11,9 @@ CONFIG += c++11
 LIBS+= -L/usr/lib/x86_64-linux-gnu/libjpeg.so -ljpeg
 LIBS += -L/usr/lib/x86_64-linux-gnu  -lavcodec -lavformat -lavutil -lavcodec -ljpeg
 SOURCES += \
+    JSON/srcs/cfg_doc.c \
+    JSON/srcs/record.c \
+    JSON/srcs/snapshot.c\
     Queue.c \
     capture.c \
     encode.c \
@@ -18,10 +21,15 @@ SOURCES += \
     gas_cammera.c \
     rgb_converter.c \
     save_snapshot.c \
+    stage_lib.c \
     write_record.c \
     yuv_converter.c
 
 HEADERS += \
+    JSON/headers/cfg_doc.h \
+    JSON/headers/cfg_obj.h \
+    JSON/headers/record.h \
+    JSON/headers/snapshot.h \
     Queue.h \
     capture.h \
     encode.h \
@@ -41,4 +49,5 @@ unix {
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    JSON/config.log \
     gas_cammera.pro.user

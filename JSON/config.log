@@ -1,0 +1,14 @@
+'Shell':{
+'Snapshot':{
+'file_name':snap,
+'width':240,
+'height':320,
+'type':jpg
+},
+'Record':{
+'codec':2,
+'width':240,
+'height':320,
+'file_name':tammaruusshh.ts
+}
+}

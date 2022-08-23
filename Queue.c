@@ -33,8 +33,9 @@ void initQueue(Queue* q,int capacity){
     return;
 }
 void freeNode(Node* node){
-    if(node==NULL)
-        return;
+    if(node==NULL){
+        printf("double feeeing\n");
+        return;}
     node->data=0;
     free(node);
 }

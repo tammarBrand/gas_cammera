@@ -9,7 +9,7 @@ void* capture(void* data, void* params){
     if(matrix==NULL)
     {
         printf("error\n");
-        sleep(2);
+
         exit(0);
     }
     for(int i=0;i<record->height;i++)  {
@@ -18,6 +18,7 @@ void* capture(void* data, void* params){
     }
     randMat(matrix,record->height,record->width);
     printf("capture %d\n",matrix[0][0]);
+    usleep(4000);
     return matrix;
 }
 

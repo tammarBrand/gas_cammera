@@ -12,9 +12,24 @@ void* yuv_converter(void* data, void* params){
 
     YUV * yuv=(YUV*)malloc(sizeof(YUV));
     yuv->y=(char*)malloc((record->width)*(record->height));
+    if(yuv->y==NULL)
+    {
+        printf("error allocating y\n");
+        exit(0);
+    }
     yuv->u=(char*)malloc((record->width)*(record->height)/4);
+    if(yuv->u==NULL)
+    {
+        printf("error allocating u\n");
+        exit(0);
+    }
     yuv->v=(char*)malloc((record->width)*(record->height)/4);
-    convert_to_yuv(rgb_matrix,yuv, record->height, record->width);
+
+    if(yuv->v==NULL)
+    {
+        printf("error allocating v\n");
+        exit(0);
+    }convert_to_yuv(yuv,rgb_matrix, record->height, record->width);
     free_rgb_matrix(rgb_matrix);
 
     return yuv;

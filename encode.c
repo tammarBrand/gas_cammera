@@ -13,36 +13,30 @@ void* encode(void* data, void* arg){
     encode_params* params=(encode_params*) arg;
     int ret;
 
-    params->tools->frame = av_frame_alloc();
-    if (!params->tools->frame) {
-        fprintf(stderr, "Could not allocate video frame\n");
+    ret = av_frame_make_writable(params->tools->frame);
+    if (ret < 0)
         exit(1);
-    }
-    params->tools->frame->format = params->tools->c->pix_fmt;
-    params->tools->frame->width  = params->tools->c->width;
-    params->tools->frame->height = params->tools->c->height;
-
-
-    ret = av_frame_get_buffer(params->tools->frame, 0);
-    if (ret < 0) {
-        fprintf(stderr, "Could not allocate the video frame data\n");
-        exit(1);
-    }
-
-    params->tools->frame->data[0]=(uint8_t*)yuv->y;
-    params->tools->frame->data[1]=(uint8_t*)yuv->u;
-    params->tools->frame->data[2]=(uint8_t*)yuv->v;
+    //init frame->y
+    for (int j, i=0;i<params->tools->frame->height;i++)
+        for ( j=0;j<params->tools->frame->width;j++)
+            params->tools->frame->data[0][i*params->tools->frame->linesize[0]+j]=yuv->y[i*params->tools->frame->width+j/2];
+    //init frame->y , frame->v
+    for(int i=0;i<params->tools->frame->height/2;i++)
+        for(int j=0;j<params->tools->frame->width/2;j++){
+            params->tools->frame->data [1][i*params->tools->frame->linesize[1]+j]= yuv->u[(i/2)*params->tools->frame->width+j/2];
+            params->tools->frame->data [2][i*params->tools->frame->linesize[2]+j]= yuv->v[(i/2)*params->tools->frame->width+j/2];
+        }
 
     if (params->tools->start_time==0){
         params->tools->frame->pts=0;
-        start_time=GetMHClock();
+        params->tools->start_time=GetMHClock();
     }
     else
         params->tools->frame->pts = GetMHClock()-params->tools->start_time;
 
 
     encode_it(params->tools->c, params->tools->frame, params->tools->pkt, params->tools->f);
- /*     write_record_data* write_data=(write_record_data*)malloc(sizeof(write_record_data));
+    /*     write_record_data* write_data=(write_record_data*)malloc(sizeof(write_record_data));
     if(write_data==NULL)
         exit(0);
     write_data->data=(uint8_t *)malloc(params->tools->pkt->size*sizeof(uint8_t));
@@ -50,8 +44,8 @@ void* encode(void* data, void* arg){
         exit(0);
   memccpy(write_data->data,params->tools->pkt->data,params->tools->pkt->size,sizeof(uint8_t));
     write_data->size=params->tools->pkt->size;
-    av_packet_unref(params->tools->pkt);*/
-    free_yuv(yuv);
+    */
+    // free_yuv(yuv);
 
     return data;
 
@@ -78,6 +72,7 @@ void* encode_it(AVCodecContext *enc_ctx, AVFrame *frame, AVPacket *pkt, FILE* f)
         }
 
         fwrite(pkt->data, 1,pkt->size, f);
+        av_packet_unref(pkt);
     }
 }
 uint64_t GetMHClock(void){
